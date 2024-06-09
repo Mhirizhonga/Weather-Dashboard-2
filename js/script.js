@@ -1,8 +1,19 @@
 document.addEventListener("DOMContentLoaded", function () {
 const cityInput = document.querySelector(".city-input");
 const searchButton = document.querySelector(".search-btn");
+const weatherCardsDiv = document.querySelector(".weather-cards");
 
 const API_KEY = "0698e6ee1534490e088c24c085a18036" // API key for OpenWeatherMap API
+
+const createWeatherCard = (weatherItem) => {
+    return `<li class="card">
+                <h3>(${weatherItem.dt_txt.split(" ")[0]})</h3>
+                <img src="https://openweathermap.org/img/wn/${weatherItem.weather[0].icon}@2x.png" alt="weather-icon">
+                <h4>Temperature: ${(weatherItem.main.temp - 273.15).toFixed(2)}</h4>
+                <h4>Wind: ${weatherItem.wind.speed} m/s</h4>
+                <h4>Humidity: ${weatherItem.main.humidity}%</h4>
+            </li>`;
+}
 
 const getWeatherDetails = (cityName, lat, lon) => {
     const WEATHER_API_URL = `http://api.openweathermap.org/data/2.5/forecast/?lat=${lat}&lon=${lon}&appid=${API_KEY}`;
@@ -11,13 +22,22 @@ const getWeatherDetails = (cityName, lat, lon) => {
      // Filter the forecast to get only one forecast per day.
 
     const uniqueForecastDays = []
-    const fiveDayForecast = data.list.filter(forecast => {
+    const fiveDaysForecast = data.list.filter(forecast => {
         const forecastDate = new Date(forecast.dt_txt).getDate()
         if (!uniqueForecastDays.includes(forecastDate)) {
             return uniqueForecastDays.push(forecastDate);
         }
     });
-    console.log(fiveDayForecast);
+
+    // Clearing previous weather data
+    cityInput.value = "";
+    weatherCardsDiv.innerHTML = "";
+
+    console.log(fiveDaysForecast);
+    fiveDaysForecast.forEach(weatherItem => {
+        weatherCardsDiv.insertAdjacentHTML("beforeend", createWeatherCard(weatherItem));
+    });
+
 }).catch(() => {
     alert("An error occured while fetching the weather forecast!")
   });
