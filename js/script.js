@@ -1,11 +1,24 @@
 document.addEventListener("DOMContentLoaded", function () {
 const cityInput = document.querySelector(".city-input");
 const searchButton = document.querySelector(".search-btn");
+const currentWeatherDiv = document.querySelector(".current-weather");
 const weatherCardsDiv = document.querySelector(".weather-cards");
 
 const API_KEY = "0698e6ee1534490e088c24c085a18036" // API key for OpenWeatherMap API
 
-const createWeatherCard = (weatherItem) => {
+const createWeatherCard = (cityName, weatherItem, index) => {
+    if (index === 0) { //HTML for main weather card
+        return `<div class="details">
+        <h2>${cityName} (${weatherItem.dt_txt.split(" ")[0]})</h2>
+        <h4>Temperature: ${(weatherItem.main.temp - 273.15).toFixed(2)}</h4>
+        <h4>Wind: ${weatherItem.wind.speed} m/s</h4>
+        <h4>Humidity: ${weatherItem.main.humidity}%</h4>
+    </div>
+    <div class="icon">
+        <img src="https://openweathermap.org/img/wn/${weatherItem.weather[0].icon}@4x.png" alt="weather-icon">
+        <h4>${weatherItem.weather[0].description}</h4>
+    </div>`;
+    } else { //HTML for other 5 day forecast weather card
     return `<li class="card">
                 <h3>(${weatherItem.dt_txt.split(" ")[0]})</h3>
                 <img src="https://openweathermap.org/img/wn/${weatherItem.weather[0].icon}@2x.png" alt="weather-icon">
@@ -13,6 +26,7 @@ const createWeatherCard = (weatherItem) => {
                 <h4>Wind: ${weatherItem.wind.speed} m/s</h4>
                 <h4>Humidity: ${weatherItem.main.humidity}%</h4>
             </li>`;
+    }
 }
 
 const getWeatherDetails = (cityName, lat, lon) => {
@@ -31,11 +45,17 @@ const getWeatherDetails = (cityName, lat, lon) => {
 
     // Clearing previous weather data
     cityInput.value = "";
+    currentWeatherDiv.innerHTML = "";
     weatherCardsDiv.innerHTML = "";
 
-    console.log(fiveDaysForecast);
-    fiveDaysForecast.forEach(weatherItem => {
-        weatherCardsDiv.insertAdjacentHTML("beforeend", createWeatherCard(weatherItem));
+    //console.log(fiveDaysForecast);
+    //Creating weather cards and adding them to the DOM
+    fiveDaysForecast.forEach((weatherItem, index) => {
+        if (index === 0) {
+            weatherCardsDiv.insertAdjacentHTML("beforeend", createWeatherCard(cityName, weatherItem, index));
+             } else {
+            weatherCardsDiv.insertAdjacentHTML("beforeend", createWeatherCard(cityName, weatherItem, index));
+        }
     });
 
 }).catch(() => {
