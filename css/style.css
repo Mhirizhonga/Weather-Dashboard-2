@@ -79,12 +79,16 @@ width: 550px;
     width: 100%;
 }
 
+.current-weather .icon {
+    text-align: center;
+}
+
 .current-weather  {
-    background: #5372f0;
     color: #fff;
-    padding: 20px 70px 20px 20px;
-    border-radius: 5px;
     display: flex;
+    border-radius: 5px;
+    padding: 20px 70px 20px 20px;
+    background: #5372f0;
     justify-content: space-between;
 }
 
